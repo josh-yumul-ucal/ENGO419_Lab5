@@ -39,3 +39,18 @@ def covariance_block(first_point, second_point):
 
     return Cxhat[row_start:row_start + 2, col_start:col_start + 2]
 
+def ellipse(C):
+    # Takes C: 2x2 covariance matrix result from "covariance_block" function
+    sx2 = C[0,0] # var x
+    sy2 = C[1,1] # var y
+    sxy = C[0,1] # cov xy
+
+    root = np.sqrt(((sx2 - sy2) / 2) ** 2 + sxy ** 2)
+    # Semi-axes (Check slide 4.21 of Sideris notes)
+    a = np.sqrt((sx2 + sy2) / 2 + root)
+    b = np.sqrt((sx2 + sy2) / 2 - root)
+    phi = np.degrees(0.5 * np.arctan2(2 * sxy, sx2 - sy2))
+
+    # a and b are the semi-axes of the error ellipse
+    # phi is the angle from the x-axis to a
+    return a, b, phi
