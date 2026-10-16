@@ -165,11 +165,38 @@ plt.savefig("network_ellipses.png")
 # Task 2d
 station_area = station[:, 6] * station[:, 7]
 relative_area = relative[:, 7] * relative[:, 8]
-print("Largest relative ellipse:", relative[np.argmax(relative_area), :2])
-print("Smallest relative ellipse:", relative[np.argmin(relative_area), :2])
-print("Largest station error ellipse: Station", int(station[np.argmax(station_area), 0]))
-print("Smallest station error ellipse: Station", int(station[np.argmin(station_area), 0]))
 
+# Creating array of station/relative error ellipse indices for printing purposes
+station_order = np.argsort(station_area, kind="stable")
+relative_order = np.argsort(relative_area, kind="stable")
+
+# Created an array with the station points in order of smallest to largest error ellipses
+station_sorted = []
+for idx in station_order:
+    point, X, Y, a, b, phi, a95, b95 = station[idx]
+    station_sorted.append([point, a95, b95, a95 / b95, np.pi * a95 * b95])
+
+
+headers = ["Point", "a95(mm)", "b95(mm)", "a/b", "Area(mm^2)"]
+print("\nStation error ellipses (smallest to largest)")
+
+df = pd.DataFrame(station_sorted, columns=headers)
+df["Point"] = df["Point"].astype(int)
+print(df.to_string(index=False))
+
+# Created an array with the relative error ellipses in order of smallest to largest
+relative_sorted = []
+for idx in relative_order:
+    i, j, X, Y, a, b, phi, a95, b95 = relative[idx]
+    relative_sorted.append([f"{int(i)}-{int(j)}", a95, b95, a95 / b95, np.pi * a95 * b95])
+
+headers = ["Link", "a95(mm)", "b95(mm)", "a/b", "Area(mm^2)"]
+print("\nRelative error ellipses (smallest to largest)")
+
+df = pd.DataFrame(relative_sorted, columns=headers)
+print(df.to_string(index=False))
+
+# Use the terminal to confirm task 2d results
 
 def distance_error(i, j):
     dX, dY = coords[j -1] - coords [i - 1]
