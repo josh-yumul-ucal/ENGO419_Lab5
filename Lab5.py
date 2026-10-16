@@ -82,14 +82,30 @@ for row in distances:
     relative.append([i, j, X, Y, a * 1000, b * 1000, phi, expansion_factor * a * 1000, expansion_factor * b * 1000])
 relative = np.array(relative)
 
+# Creating print to terminal statements
+
+# Printing station error ellipses and expansion factor
 headers = ["Point", "X(m)", "Y(m)", "a(mm)", "b(mm)", "phi(deg)", "a95(mm)", "b95(mm)"]
 
 print(f"95% Expansion Factor: {expansion_factor}")
 print(f"Station error ellipses")
 
-# Using pandas to print results to terminal
-
 df = pd.DataFrame(station, columns=headers)
 df["Point"] = df["Point"].astype(int)
 
 print(df.to_string(index=False))
+
+
+# Printing distance error ellipses
+headers = ["Link", "X(m)", "Y(m)", "a(mm)", "b(mm)", "phi(deg)", "a95(mm)", "b95(mm)"]
+print("Relative error ellipses")
+
+# Indexes all of relative except for the first two columns which correspond to the points of the distance
+df = pd.DataFrame(relative[:, 2:], columns=headers[1:])
+# Inserts the first two columns of relative by combining them into one fstring with a dash to show the link
+df.insert(0, "Link", [f"{int(r[0])}-{int(r[1])}" for r in relative])
+print(df.to_string(index=False))
+
+# End of task 2a)
+
+# Task 2b)
