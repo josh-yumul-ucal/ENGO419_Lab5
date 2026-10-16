@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import chi2
+import pandas as pd
 
 # Using proper pep8 notation now
 XHAT_FILE = np.loadtxt("final_xhat.txt")
@@ -68,3 +69,27 @@ for point in UNKNOWN_IDS:
     # a and b converted to [mm], phi, a and b converted to [mm] and scaled by expansion factor
     station.append([point, X, Y, a * 1000, b * 1000, phi, expansion_factor * a * 1000, expansion_factor * b * 1000])
 station = np.array(station)
+
+relative = []
+for row in distances:
+    i = int(row[0])
+    j = int(row[1])
+
+    C_deltaij = covariance_block(i,i) + covariance_block(j, j) - covariance_block(i, j) - covariance_block(j, i)
+
+    a, b, phi = ellipse(C_deltaij)
+    X, Y - (coords[i - 1] + coords[j -1]) / 2
+    relative.append([i, j, X, Y, a * 1000, b * 1000, phi, expansion_factor * a * 1000, expansion_factor * b * 1000])
+relative = np.array(relative)
+
+headers = ["Point", "X(m)", "Y(m)", "a(mm)", "b(mm)", "phi(deg)", "a95(mm)", "b95(mm)"]
+
+print(f"95% Expansion Factor: {expansion_factor}")
+print(f"Station error ellipses")
+
+# Using pandas to print results to terminal
+
+df = pd.DataFrame(station, columns=headers)
+df["Point"] = df["Point"].astype(int)
+
+print(df.to_string(index=False))
