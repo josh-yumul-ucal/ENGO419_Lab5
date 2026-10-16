@@ -112,7 +112,7 @@ print(df.to_string(index=False))
 # rewrote the drawEllipse.m script using pyplot
 def draw_ellipse(col, a, b, x0, y0, phi):
     phi = np.radians(phi)
-    theta = np.linspace(0, 2 * np.pi, 361)
+    theta = np.linspace(0, 2 * np.pi, 360)
 
     x = a * np.cos(theta)
     y = b * np.sin(theta)
