@@ -210,11 +210,11 @@ def distance_error(i, j):
 
     return d, sigma_dist
 
-# Sort points from smallest to largest station ellipse
-order = station[np.argsort(station_area), 0].astype(int)
 
 print("\nTask 2d")
-for i, j in [(order[-1], order[-2]), (order[0], order[1])]:
+for first_point, second_point in [(station_sorted[-1], station_sorted[-2]), (station_sorted[0], station_sorted[1])]:
+    i = int(first_point[0])
+    j = int(second_point[0])
     d, sigma_d = distance_error(i, j)
     print(f"{i}-{j}: {d:.3f} m, σ = {sigma_d*1000:.3f} mm, 1:{d/sigma_d:,.0f}")
 
