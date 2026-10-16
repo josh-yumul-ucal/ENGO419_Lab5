@@ -159,8 +159,34 @@ plt.ylabel("Y (m)")
 plt.title(f"Error Ellipses (Scale x{plot_scale})")
 
 plt.savefig("network_ellipses.png")
-plt.show()
 
-# Task 2c in report
+# Task 2c in report, order of smallest to largest error ellipse below
 
 # Task 2d
+station_area = station[:, 6] * station[:, 7]
+relative_area = relative[:, 7] * relative[:, 8]
+print("Largest relative ellipse:", relative[np.argmax(relative_area), :2])
+print("Smallest relative ellipse:", relative[np.argmin(relative_area), :2])
+
+
+def distance_error(i, j):
+    dX, dY = coords[j -1] - coords [i - 1]
+    d = np.sqrt(dX**2 + dY**2)
+
+    J = np.array([dX / d, dY / d])
+
+    C_deltaij = covariance_block(i,i) + covariance_block(j, j) - covariance_block(i, j) - covariance_block(j, i)
+
+    sigma_dist = np.sqrt(J @ C_deltaij @ J)
+
+    return d, sigma_dist
+
+# Sort points from smallest to largest station ellipse
+order = station[np.argsort(station_area), 0].astype(int)
+
+print("\nTask 2d")
+for i, j in [(order[-1], order[-2]), (order[0], order[1])]:
+    d, sigma_d = distance_error(i, j)
+    print(f"{i}-{j}: {d:.3f} m, σ = {sigma_d*1000:.3f} mm, 1:{d/sigma_d:,.0f}")
+
+plt.show()
