@@ -25,7 +25,7 @@ coords = np.zeros((7, 2))
 for k in range(5):
     coords[UNKNOWN_IDS[k] - 1] = xhat[k]
 for row in revised_coords:
-    coords[row[0] - 1] = row[1:3]
+    coords[int(row[0]) - 1] = row[1:3]
 
 def covariance_block(first_point, second_point):
     # If point 2 or 4, variance = 0 because they are control points
@@ -54,3 +54,17 @@ def ellipse(C):
     # a and b are the semi-axes of the error ellipse
     # phi is the angle from the x-axis to a
     return a, b, phi
+
+# Sideris slides 4.24
+# Computing expansion factor using confidence
+expansion_factor = np.sqrt(chi2.ppf(CONFIDENCE, 2))
+
+station = []
+for point in UNKNOWN_IDS:
+    a, b, phi = ellipse(covariance_block(point, point))
+    X, Y = coords[point - 1]
+
+    # appends to stations array: point index, X-coordinate, Y-coordinate,
+    # a and b converted to [mm], phi, a and b converted to [mm] and scaled by expansion factor
+    station.append([point, X, Y, a * 1000, b * 1000, phi, expansion_factor * a * 1000, expansion_factor * b * 1000])
+station = np.array(station)
