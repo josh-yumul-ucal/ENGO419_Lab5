@@ -167,6 +167,8 @@ station_area = station[:, 6] * station[:, 7]
 relative_area = relative[:, 7] * relative[:, 8]
 print("Largest relative ellipse:", relative[np.argmax(relative_area), :2])
 print("Smallest relative ellipse:", relative[np.argmin(relative_area), :2])
+print("Largest station error ellipse: Station", int(station[np.argmax(station_area), 0]))
+print("Smallest station error ellipse: Station", int(station[np.argmin(station_area), 0]))
 
 
 def distance_error(i, j):
