@@ -78,7 +78,7 @@ for row in distances:
     C_deltaij = covariance_block(i,i) + covariance_block(j, j) - covariance_block(i, j) - covariance_block(j, i)
 
     a, b, phi = ellipse(C_deltaij)
-    X, Y - (coords[i - 1] + coords[j -1]) / 2
+    X, Y = (coords[i - 1] + coords[j -1]) / 2
     relative.append([i, j, X, Y, a * 1000, b * 1000, phi, expansion_factor * a * 1000, expansion_factor * b * 1000])
 relative = np.array(relative)
 
@@ -109,3 +109,58 @@ print(df.to_string(index=False))
 # End of task 2a)
 
 # Task 2b)
+# rewrote the drawEllipse.m script using pyplot
+def draw_ellipse(col, a, b, x0, y0, phi):
+    phi = np.radians(phi)
+    theta = np.linspace(0, 2 * np.pi, 361)
+
+    x = a * np.cos(theta)
+    y = b * np.sin(theta)
+
+    X = np.cos(phi) * x - np.sin(phi) * y + x0
+    Y = np.sin(phi) * x + np.cos(phi) * y + y0
+
+    plt.plot(X, Y, col, linewidth=2)
+
+# Plot scale so that the ellipses are visible
+plot_scale = 3000
+
+plt.figure("Network Plot", figsize=(9, 8))
+
+# Lines for obs dist
+for dist in distances:
+    i = int(dist[0]) - 1
+    j = int(dist[1]) - 1
+    plt.plot([coords[i, 0], coords[j, 0]], [coords[i, 1], coords[j, 1]], "k-", linewidth=0.9
+    )
+
+# Point labels
+plt.scatter(coords[:, 0], coords[:, 1], s=20, zorder=10) 
+for i in range(7):
+    plt.text(coords[i,0] + 10, coords[i,1] - 25, str(i + 1))
+
+# Scaled ellipses
+for s in station:
+    draw_ellipse("b", s[6] /1000 * plot_scale, s[7] / 1000 * plot_scale, s[1], s[2], s[5])
+
+# Relative ellipses of observed distances
+for r in relative:
+    draw_ellipse("r--", r[7] / 1000 * plot_scale, r[8] / 1000 * plot_scale, r[2], r[3], r[6])
+
+plt.plot([], [], "b", label="Station")
+plt.plot([], [], "r--", label="Relative")
+plt.plot([], [], "k-", label="Distance")
+plt.legend()
+
+plt.axis("equal")
+plt.grid()
+plt.xlabel("X (m)")
+plt.ylabel("Y (m)")
+plt.title(f"Error Ellipses (Scale x{plot_scale})")
+
+plt.savefig("network_ellipses.png")
+plt.show()
+
+# Task 2c in report
+
+# Task 2d
